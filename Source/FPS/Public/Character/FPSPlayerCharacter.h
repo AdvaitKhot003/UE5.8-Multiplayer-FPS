@@ -6,6 +6,11 @@
 #include "GameFramework/Character.h"
 #include "FPSPlayerCharacter.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+/**
+ * 
+ */
 UCLASS()
 class FPS_API AFPSPlayerCharacter : public ACharacter
 {
@@ -19,7 +24,15 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 protected:
+	UPROPERTY(VisibleAnywhere, Category = "FPS|Mesh")
+	TObjectPtr<USkeletalMeshComponent> PlayerMesh1P;
 	
-public:	
+	UPROPERTY(VisibleAnywhere, Category = "FPS|Camera")
+	TObjectPtr<USpringArmComponent> SpringArm;
+	
+	UPROPERTY(VisibleAnywhere, Category = "FPS|Camera")
+	TObjectPtr<UCameraComponent> FollowCamera;
+	
+private:
 	
 };
