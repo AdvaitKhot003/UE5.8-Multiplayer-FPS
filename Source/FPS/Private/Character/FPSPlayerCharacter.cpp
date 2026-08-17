@@ -4,6 +4,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 AFPSPlayerCharacter::AFPSPlayerCharacter()
 {
@@ -39,6 +40,8 @@ AFPSPlayerCharacter::AFPSPlayerCharacter()
 	GetMesh()->SetOwnerNoSee(true);
 	GetMesh()->SetCastShadow(true);
 	GetMesh()->SetReceivesDecals(false);
+	
+	GetCharacterMovement()->MovementState.bCanCrouch = true;
 }
 
 void AFPSPlayerCharacter::BeginPlay()
