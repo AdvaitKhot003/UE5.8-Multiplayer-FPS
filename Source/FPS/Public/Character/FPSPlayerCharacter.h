@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interface/FPSPlayerInterface.h"
 #include "FPSPlayerCharacter.generated.h"
 
 class USpringArmComponent;
@@ -13,7 +14,7 @@ class UFPSPlayerCombat;
  * 
  */
 UCLASS()
-class FPS_API AFPSPlayerCharacter : public ACharacter
+class FPS_API AFPSPlayerCharacter : public ACharacter, public IFPSPlayerInterface
 {
 	GENERATED_BODY()
 	
@@ -23,6 +24,10 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	
+#pragma region Player Interface
+	virtual FName GetWeaponGripPoint_Implementation(const FGameplayTag& WeaponType) const override;
+#pragma endregion 
 	
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "FPS|Mesh")

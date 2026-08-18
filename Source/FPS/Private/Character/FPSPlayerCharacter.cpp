@@ -9,6 +9,7 @@
 #include "Player/FPSPlayerController.h"
 #include "Input/FPSPlayerEnhancedInput.h"
 #include "Data/FPSPlayerInputData.h"
+#include "Data/FPSPlayerWeaponData.h"
 
 AFPSPlayerCharacter::AFPSPlayerCharacter()
 {
@@ -61,6 +62,13 @@ void AFPSPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
+}
+
+FName AFPSPlayerCharacter::GetWeaponGripPoint_Implementation(const FGameplayTag& WeaponType) const
+{
+	const UFPSPlayerWeaponData* PlayerWeaponData = PlayerCombat->GetPlayerWeaponData();
+	check(PlayerWeaponData);
+	return PlayerWeaponData->WeaponGripPoints.FindChecked(WeaponType);
 }
 
 void AFPSPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

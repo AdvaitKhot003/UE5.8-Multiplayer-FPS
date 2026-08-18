@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "FPSPlayerCombat.generated.h"
 
+class UFPSPlayerWeaponData;
 /**
  * 
  */
@@ -20,6 +21,8 @@ public:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
+	FORCEINLINE UFPSPlayerWeaponData* GetPlayerWeaponData() const { return PlayerWeaponData; }
+	
 	void Initiate_CycleWeapon();
 	
 	void Initiate_AimWeaponPressed();
@@ -33,5 +36,6 @@ public:
 protected:
 	
 private:
-	
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon")
+	TObjectPtr<UFPSPlayerWeaponData> PlayerWeaponData;
 };
