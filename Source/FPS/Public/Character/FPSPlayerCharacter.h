@@ -8,6 +8,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class UFPSPlayerCombat;
 /**
  * 
  */
@@ -32,6 +33,9 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, Category = "FPS|Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
+	
+	UPROPERTY(VisibleAnywhere, Category = "FPS|Combat")
+	TObjectPtr<UFPSPlayerCombat> PlayerCombat;
 	
 private:
 	
