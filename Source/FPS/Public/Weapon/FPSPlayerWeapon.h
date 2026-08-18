@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "FPSPlayerWeapon.generated.h"
 
@@ -19,9 +20,13 @@ public:
 	
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh1P() const { return WeaponMesh1P; }
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh3P() const { return WeaponMesh3P; }
+	FORCEINLINE FGameplayTag GetWeaponType() const { return WeaponType; }
 	
 protected:
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon", meta = (Categories = "Weapon.WeaponType"))
+	FGameplayTag WeaponType;
 	
 private:
 	UPROPERTY(VisibleAnywhere, Category = "FPS|Mesh")

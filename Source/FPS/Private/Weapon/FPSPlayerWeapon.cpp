@@ -1,6 +1,7 @@
 ﻿// No Copyright.
 
 #include "Weapon/FPSPlayerWeapon.h"
+#include "Tags/FPSPlayerGameplayTags.h"
 
 AFPSPlayerWeapon::AFPSPlayerWeapon()
 {
@@ -21,6 +22,8 @@ AFPSPlayerWeapon::AFPSPlayerWeapon()
 	WeaponMesh3P->SetCastShadow(true);
 	WeaponMesh3P->SetReceivesDecals(false);
 	WeaponMesh3P->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
+	
+	WeaponType = WeaponTags::Weapon_WeaponType_None;
 }
 
 void AFPSPlayerWeapon::BeginPlay()
