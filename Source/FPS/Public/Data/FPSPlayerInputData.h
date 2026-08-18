@@ -17,11 +17,12 @@ class FPS_API UFPSPlayerInputData : public UDataAsset
 	GENERATED_BODY()
 	
 public:
-	/** Input Mapping Context */
+#pragma region Input Mapping Context
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|IMC")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
+#pragma endregion
 	
-	/** Input Actions - Locomotion */
+#pragma region Input Actions - Locomotion
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|IA|Locomotion")
 	TObjectPtr<UInputAction> LookAction;
 	
@@ -33,4 +34,19 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|IA|Locomotion")
 	TObjectPtr<UInputAction> CrouchAction;
+#pragma endregion
+	
+#pragma region Input Actions - Combat
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|IA|Combat")
+	TObjectPtr<UInputAction> CycleWeaponAction;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|IA|Combat")
+	TObjectPtr<UInputAction> AimWeaponAction;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|IA|Combat")
+	TObjectPtr<UInputAction> FireWeaponAction;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|IA|Combat")
+	TObjectPtr<UInputAction> ReloadWeaponAction;
+#pragma endregion
 };

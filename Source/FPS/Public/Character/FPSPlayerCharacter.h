@@ -38,5 +38,13 @@ protected:
 	TObjectPtr<UFPSPlayerCombat> PlayerCombat;
 	
 private:
+	void Input_CycleWeapon();
 	
+	void Input_AimWeaponPressed();
+	void Input_AimWeaponReleased();
+	
+	void Input_FireWeaponPressed();
+	void Input_FireWeaponReleased();
+	
+	void Input_ReloadWeapon();
 };

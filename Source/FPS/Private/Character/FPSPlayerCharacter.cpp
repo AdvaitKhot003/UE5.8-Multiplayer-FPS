@@ -6,6 +6,9 @@
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Combat/FPSPlayerCombat.h"
+#include "Player/FPSPlayerController.h"
+#include "Input/FPSPlayerEnhancedInput.h"
+#include "Data/FPSPlayerInputData.h"
 
 AFPSPlayerCharacter::AFPSPlayerCharacter()
 {
@@ -64,4 +67,73 @@ void AFPSPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	
+	const AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(GetController());
+	if (!IsValid(PlayerController)) return;
+	
+	const UFPSPlayerInputData* PlayerInputData = PlayerController->GetPlayerInputData();
+	check(PlayerInputData);
+	
+	UFPSPlayerEnhancedInput* PlayerEnhancedInput = CastChecked<UFPSPlayerEnhancedInput>(PlayerInputComponent);
+	
+	const UInputAction* CycleWeaponAction = PlayerInputData->CycleWeaponAction;
+	check(CycleWeaponAction);
+	PlayerEnhancedInput->BindAction(
+		CycleWeaponAction, ETriggerEvent::Started,
+		this, &ThisClass::Input_CycleWeapon);
+	
+	const UInputAction* AimWeaponAction = PlayerInputData->AimWeaponAction;
+	check(AimWeaponAction);
+	PlayerEnhancedInput->BindAction(
+		AimWeaponAction, ETriggerEvent::Started,
+		this, &ThisClass::Input_AimWeaponPressed);
+	
+	PlayerEnhancedInput->BindAction(
+		AimWeaponAction, ETriggerEvent::Completed,
+		this, &ThisClass::Input_AimWeaponReleased);
+	
+	const UInputAction* FireWeaponAction = PlayerInputData->FireWeaponAction;
+	check(FireWeaponAction);
+	PlayerEnhancedInput->BindAction(
+		FireWeaponAction, ETriggerEvent::Started,
+		this, &ThisClass::Input_FireWeaponPressed);
+	
+	PlayerEnhancedInput->BindAction(
+		FireWeaponAction, ETriggerEvent::Completed,
+		this, &ThisClass::Input_FireWeaponReleased);
+	
+	const UInputAction* ReloadWeaponAction = PlayerInputData->ReloadWeaponAction;
+	check(ReloadWeaponAction);
+	PlayerEnhancedInput->BindAction(
+		ReloadWeaponAction, ETriggerEvent::Started,
+		this, &ThisClass::Input_ReloadWeapon);
+}
+
+void AFPSPlayerCharacter::Input_CycleWeapon()
+{
+	PlayerCombat->Initiate_CycleWeapon();
+}
+
+void AFPSPlayerCharacter::Input_AimWeaponPressed()
+{
+	PlayerCombat->Initiate_AimWeaponPressed();
+}
+
+void AFPSPlayerCharacter::Input_AimWeaponReleased()
+{
+	PlayerCombat->Initiate_AimWeaponReleased();
+}
+
+void AFPSPlayerCharacter::Input_FireWeaponPressed()
+{
+	PlayerCombat->Initiate_FireWeaponPressed();
+}
+
+void AFPSPlayerCharacter::Input_FireWeaponReleased()
+{
+	PlayerCombat->Initiate_FireWeaponReleased();
+}
+
+void AFPSPlayerCharacter::Input_ReloadWeapon()
+{
+	PlayerCombat->Initiate_ReloadWeapon();
 }
