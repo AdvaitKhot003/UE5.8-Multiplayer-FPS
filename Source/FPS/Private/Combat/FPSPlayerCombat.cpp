@@ -1,6 +1,7 @@
 ﻿// No Copyright.
 
 #include "Combat/FPSPlayerCombat.h"
+#include "Weapon/FPSPlayerWeapon.h"
 
 UFPSPlayerCombat::UFPSPlayerCombat()
 {
@@ -18,6 +19,31 @@ void UFPSPlayerCombat::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
+}
+
+void UFPSPlayerCombat::SpawnInventory()
+{
+	check(DefaultWeaponClass);
+	AFPSPlayerWeapon* SpawnedWeapon = SpawnWeapon(DefaultWeaponClass);
+}
+
+void UFPSPlayerCombat::DestroyInventory()
+{
+	
+}
+
+AFPSPlayerWeapon* UFPSPlayerCombat::SpawnWeapon(const TSubclassOf<AFPSPlayerWeapon> WeaponClass) const
+{
+	AActor* OwningActor = GetOwner();
+	if (!IsValid(OwningActor)) return nullptr;
+	if (!OwningActor->HasAuthority()) return nullptr;
+	
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = OwningActor;
+	SpawnParams.Instigator = Cast<APawn>(OwningActor);
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	
+	return GetWorld()->SpawnActor<AFPSPlayerWeapon>(WeaponClass, SpawnParams);
 }
 
 void UFPSPlayerCombat::Initiate_CycleWeapon()

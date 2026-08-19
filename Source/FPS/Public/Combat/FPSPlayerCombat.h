@@ -7,6 +7,7 @@
 #include "FPSPlayerCombat.generated.h"
 
 class UFPSPlayerWeaponData;
+class AFPSPlayerWeapon;
 /**
  * 
  */
@@ -23,6 +24,9 @@ public:
 	
 	FORCEINLINE UFPSPlayerWeaponData* GetPlayerWeaponData() const { return PlayerWeaponData; }
 	
+	void SpawnInventory();
+	void DestroyInventory();
+	
 	void Initiate_CycleWeapon();
 	
 	void Initiate_AimWeaponPressed();
@@ -38,4 +42,9 @@ protected:
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon")
 	TObjectPtr<UFPSPlayerWeaponData> PlayerWeaponData;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon")
+	TSubclassOf<AFPSPlayerWeapon> DefaultWeaponClass;
+	
+	AFPSPlayerWeapon* SpawnWeapon(const TSubclassOf<AFPSPlayerWeapon> WeaponClass) const;
 };

@@ -58,6 +58,13 @@ void AFPSPlayerCharacter::BeginPlay()
 	
 }
 
+void AFPSPlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	
+	PlayerCombat->SpawnInventory();
+}
+
 void AFPSPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
