@@ -18,9 +18,13 @@ class FPS_API AFPSPlayerWeapon : public AActor
 public:
 	AFPSPlayerWeapon();
 	
+	virtual void OnRep_Instigator() override;
+	
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh1P() const { return WeaponMesh1P; }
 	FORCEINLINE USkeletalMeshComponent* GetWeaponMesh3P() const { return WeaponMesh3P; }
 	FORCEINLINE FGameplayTag GetWeaponType() const { return WeaponType; }
+	
+	void AttachWeaponToOwningPawn();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -34,4 +38,6 @@ private:
 	
 	UPROPERTY(VisibleAnywhere, Category = "FPS|Mesh")
 	TObjectPtr<USkeletalMeshComponent> WeaponMesh3P;
+
+	void SetWeaponVisibility(APawn* OwningPawn);
 };

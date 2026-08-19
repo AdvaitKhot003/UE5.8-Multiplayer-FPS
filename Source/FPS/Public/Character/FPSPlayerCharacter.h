@@ -28,6 +28,8 @@ public:
 	
 #pragma region Player Interface
 	virtual FName GetWeaponGripPoint_Implementation(const FGameplayTag& WeaponType) const override;
+	virtual USkeletalMeshComponent* GetPlayerMesh1P_Implementation() const override;
+	virtual USkeletalMeshComponent* GetPlayerMesh3P_Implementation() const override;
 #pragma endregion 
 	
 protected:

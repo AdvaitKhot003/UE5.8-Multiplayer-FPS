@@ -24,4 +24,10 @@ class FPS_API IFPSPlayerInterface
 public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	FName GetWeaponGripPoint(const FGameplayTag& WeaponType) const;
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	USkeletalMeshComponent* GetPlayerMesh1P() const;
+	
+	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
+	USkeletalMeshComponent* GetPlayerMesh3P() const;
 };

@@ -24,7 +24,10 @@ void UFPSPlayerCombat::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 void UFPSPlayerCombat::SpawnInventory()
 {
 	check(DefaultWeaponClass);
+	
 	AFPSPlayerWeapon* SpawnedWeapon = SpawnWeapon(DefaultWeaponClass);
+	if (!IsValid(SpawnedWeapon)) return;
+	SpawnedWeapon->AttachWeaponToOwningPawn();
 }
 
 void UFPSPlayerCombat::DestroyInventory()
