@@ -24,9 +24,11 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	FORCEINLINE UFPSPlayerWeaponData* GetPlayerWeaponData() const { return PlayerWeaponData; }
+	FORCEINLINE AFPSPlayerWeapon* GetCurrentEquippedWeapon() const { return CurrentEquippedWeapon; }
 	
 	void SpawnInventory();
 	void DestroyInventory();
+	void EquipWeapon(AFPSPlayerWeapon* Weapon);
 	
 	void Initiate_CycleWeapon();
 	
@@ -49,6 +51,12 @@ private:
 	
 	UPROPERTY(Transient, Replicated)
 	TArray<AFPSPlayerWeapon*> Inventory;
+	
+	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentEquippedWeapon)
+	TObjectPtr<AFPSPlayerWeapon> CurrentEquippedWeapon;
+	
+	UFUNCTION()
+	void OnRep_CurrentEquippedWeapon(AFPSPlayerWeapon* PreviousEquippedWeapon);
 	
 	AFPSPlayerWeapon* SpawnWeapon(const TSubclassOf<AFPSPlayerWeapon> WeaponClass) const;
 };

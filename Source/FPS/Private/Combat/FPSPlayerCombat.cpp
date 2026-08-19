@@ -27,6 +27,13 @@ void UFPSPlayerCombat::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 	
 	DOREPLIFETIME(UFPSPlayerCombat, Inventory);
+	DOREPLIFETIME(UFPSPlayerCombat, CurrentEquippedWeapon);
+}
+
+void UFPSPlayerCombat::OnRep_CurrentEquippedWeapon(AFPSPlayerWeapon* PreviousEquippedWeapon)
+{
+	if (!IsValid(CurrentEquippedWeapon)) return;
+	CurrentEquippedWeapon->AttachWeaponToOwningPawn();
 }
 
 void UFPSPlayerCombat::SpawnInventory()
@@ -43,12 +50,30 @@ void UFPSPlayerCombat::SpawnInventory()
 	}
 	
 	if (Inventory.IsEmpty()) return;
-	Inventory[0]->AttachWeaponToOwningPawn();
+	EquipWeapon(Inventory[0]);
 }
 
 void UFPSPlayerCombat::DestroyInventory()
 {
+	const AActor* OwningActor = GetOwner();
+	if (!IsValid(OwningActor)) return;
+	if (!OwningActor->HasAuthority()) return;
 	
+	for (AFPSPlayerWeapon* Weapon : Inventory)
+	{
+		if (!IsValid(Weapon)) continue;
+		Weapon->Destroy();
+	}
+	
+	Inventory.Empty();
+	CurrentEquippedWeapon = nullptr;
+}
+
+void UFPSPlayerCombat::EquipWeapon(AFPSPlayerWeapon* Weapon)
+{
+	if (!IsValid(Weapon)) return;
+	CurrentEquippedWeapon = Weapon;
+	CurrentEquippedWeapon->AttachWeaponToOwningPawn();
 }
 
 AFPSPlayerWeapon* UFPSPlayerCombat::SpawnWeapon(const TSubclassOf<AFPSPlayerWeapon> WeaponClass) const

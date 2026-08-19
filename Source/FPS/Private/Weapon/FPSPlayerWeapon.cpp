@@ -3,6 +3,7 @@
 #include "Weapon/FPSPlayerWeapon.h"
 #include "Tags/FPSPlayerGameplayTags.h"
 #include "Interface/FPSPlayerInterface.h"
+#include "Combat/FPSPlayerCombat.h"
 
 AFPSPlayerWeapon::AFPSPlayerWeapon()
 {
@@ -37,7 +38,15 @@ void AFPSPlayerWeapon::OnRep_Instigator()
 {
 	Super::OnRep_Instigator();
 	
-	AttachWeaponToOwningPawn();
+	const APawn* OwningPawn = GetInstigator();
+	if (!IsValid(OwningPawn)) return;
+	
+	const UFPSPlayerCombat* PlayerCombat = OwningPawn->FindComponentByClass<UFPSPlayerCombat>();
+	if (!IsValid(PlayerCombat)) return;
+	
+	AFPSPlayerWeapon* CurrentEquippedWeapon = PlayerCombat->GetCurrentEquippedWeapon();
+	if (CurrentEquippedWeapon != this) return;
+	CurrentEquippedWeapon->AttachWeaponToOwningPawn();
 }
 
 void AFPSPlayerWeapon::AttachWeaponToOwningPawn()

@@ -65,6 +65,13 @@ void AFPSPlayerCharacter::PossessedBy(AController* NewController)
 	PlayerCombat->SpawnInventory();
 }
 
+void AFPSPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	PlayerCombat->DestroyInventory();
+	
+	Super::EndPlay(EndPlayReason);
+}
+
 void AFPSPlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
