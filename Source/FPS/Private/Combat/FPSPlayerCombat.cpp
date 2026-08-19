@@ -2,6 +2,7 @@
 
 #include "Combat/FPSPlayerCombat.h"
 #include "Weapon/FPSPlayerWeapon.h"
+#include "Net/UnrealNetwork.h"
 
 UFPSPlayerCombat::UFPSPlayerCombat()
 {
@@ -21,13 +22,28 @@ void UFPSPlayerCombat::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	
 }
 
+void UFPSPlayerCombat::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	
+	DOREPLIFETIME(UFPSPlayerCombat, Inventory);
+}
+
 void UFPSPlayerCombat::SpawnInventory()
 {
-	check(DefaultWeaponClass);
+	const AActor* OwningActor = GetOwner();
+	if (!IsValid(OwningActor)) return;
+	if (!OwningActor->HasAuthority()) return;
 	
-	AFPSPlayerWeapon* SpawnedWeapon = SpawnWeapon(DefaultWeaponClass);
-	if (!IsValid(SpawnedWeapon)) return;
-	SpawnedWeapon->AttachWeaponToOwningPawn();
+	for (const TSubclassOf<AFPSPlayerWeapon>& WeaponClass : DefaultWeaponClasses)
+	{
+		AFPSPlayerWeapon* SpawnedWeapon = SpawnWeapon(WeaponClass);
+		if (!IsValid(SpawnedWeapon)) continue;
+		Inventory.AddUnique(SpawnedWeapon);
+	}
+	
+	if (Inventory.IsEmpty()) return;
+	Inventory[0]->AttachWeaponToOwningPawn();
 }
 
 void UFPSPlayerCombat::DestroyInventory()

@@ -21,6 +21,7 @@ public:
 	
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 	
 	FORCEINLINE UFPSPlayerWeaponData* GetPlayerWeaponData() const { return PlayerWeaponData; }
 	
@@ -44,7 +45,10 @@ private:
 	TObjectPtr<UFPSPlayerWeaponData> PlayerWeaponData;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon")
-	TSubclassOf<AFPSPlayerWeapon> DefaultWeaponClass;
+	TArray<TSubclassOf<AFPSPlayerWeapon>> DefaultWeaponClasses;
+	
+	UPROPERTY(Transient, Replicated)
+	TArray<AFPSPlayerWeapon*> Inventory;
 	
 	AFPSPlayerWeapon* SpawnWeapon(const TSubclassOf<AFPSPlayerWeapon> WeaponClass) const;
 };
