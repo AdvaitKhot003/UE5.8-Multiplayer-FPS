@@ -42,11 +42,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "FPS|Camera")
 	TObjectPtr<USpringArmComponent> SpringArm;
 	
-	UPROPERTY(VisibleAnywhere, Category = "FPS|Camera")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "FPS|Camera")
 	TObjectPtr<UCameraComponent> FollowCamera;
 	
-	UPROPERTY(VisibleAnywhere, Category = "FPS|Combat")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "FPS|Combat")
 	TObjectPtr<UFPSPlayerCombat> PlayerCombat;
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnAimWeapon(bool bIsAiming);
+	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|Camera")
+	float DefaultFieldOfView;
 	
 private:
 	void Input_CycleWeapon();

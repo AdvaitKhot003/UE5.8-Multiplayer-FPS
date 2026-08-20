@@ -4,6 +4,8 @@
 #include "Tags/FPSPlayerGameplayTags.h"
 #include "Interface/FPSPlayerInterface.h"
 #include "Combat/FPSPlayerCombat.h"
+#include "Character/FPSPlayerCharacter.h"
+#include "Data/FPSPlayerWeaponData.h"
 
 AFPSPlayerWeapon::AFPSPlayerWeapon()
 {
@@ -76,4 +78,15 @@ void AFPSPlayerWeapon::SetWeaponVisibility(APawn* OwningPawn)
 		WeaponMesh1P->SetHiddenInGame(true);
 		WeaponMesh3P->SetHiddenInGame(false);
 	}
+}
+
+float AFPSPlayerWeapon::GetAimFieldOfView() const
+{
+	const APawn* OwningPawn = GetInstigator();
+	const AFPSPlayerCharacter* PlayerCharacter = CastChecked<AFPSPlayerCharacter>(OwningPawn);
+	const UFPSPlayerCombat* PlayerCombat = PlayerCharacter->GetPlayerCombat();
+	const UFPSPlayerWeaponData* PlayerWeaponData = PlayerCombat->GetPlayerWeaponData();
+	check(PlayerWeaponData);
+	
+	return PlayerWeaponData->AimFieldOfViews.FindChecked(WeaponType);
 }

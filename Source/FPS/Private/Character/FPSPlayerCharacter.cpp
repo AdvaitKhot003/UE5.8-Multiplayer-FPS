@@ -50,12 +50,15 @@ AFPSPlayerCharacter::AFPSPlayerCharacter()
 	
 	PlayerCombat = CreateDefaultSubobject<UFPSPlayerCombat>(TEXT("PlayerCombatComp"));
 	PlayerCombat->SetIsReplicated(true);
+	
+	DefaultFieldOfView = 90.f;
 }
 
 void AFPSPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	FollowCamera->SetFieldOfView(DefaultFieldOfView);
 }
 
 void AFPSPlayerCharacter::PossessedBy(AController* NewController)
@@ -148,11 +151,13 @@ void AFPSPlayerCharacter::Input_CycleWeapon()
 void AFPSPlayerCharacter::Input_AimWeaponPressed()
 {
 	PlayerCombat->Initiate_AimWeaponPressed();
+	OnAimWeapon(true);
 }
 
 void AFPSPlayerCharacter::Input_AimWeaponReleased()
 {
 	PlayerCombat->Initiate_AimWeaponReleased();
+	OnAimWeapon(false);
 }
 
 void AFPSPlayerCharacter::Input_FireWeaponPressed()

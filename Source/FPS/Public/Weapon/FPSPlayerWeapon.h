@@ -26,6 +26,9 @@ public:
 	
 	void AttachWeaponToOwningPawn();
 	
+	UFUNCTION(BlueprintPure)
+	float GetAimFieldOfView() const;
+	
 protected:
 	virtual void BeginPlay() override;
 	

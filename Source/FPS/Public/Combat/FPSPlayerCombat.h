@@ -38,7 +38,7 @@ public:
 	void Initiate_AimWeaponPressed();
 	void Initiate_AimWeaponReleased();
 	
-	UPROPERTY(BlueprintReadOnly, Replicated)
+	UPROPERTY(BlueprintReadOnly, Replicated, Category = "FPS|Weapon")
 	bool bAiming;
 #pragma endregion
 	
@@ -52,6 +52,8 @@ public:
 #pragma endregion
 	
 protected:
+	UPROPERTY(Transient, BlueprintReadOnly, ReplicatedUsing = OnRep_CurrentEquippedWeapon, Category = "FPS|Weapon")
+	TObjectPtr<AFPSPlayerWeapon> CurrentEquippedWeapon;
 	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon")
@@ -62,9 +64,6 @@ private:
 	
 	UPROPERTY(Transient, Replicated)
 	TArray<AFPSPlayerWeapon*> Inventory;
-	
-	UPROPERTY(Transient, ReplicatedUsing = OnRep_CurrentEquippedWeapon)
-	TObjectPtr<AFPSPlayerWeapon> CurrentEquippedWeapon;
 	
 	UFUNCTION()
 	void OnRep_CurrentEquippedWeapon(AFPSPlayerWeapon* PreviousEquippedWeapon);
