@@ -28,6 +28,7 @@ void UFPSPlayerCombat::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 	
 	DOREPLIFETIME(UFPSPlayerCombat, Inventory);
 	DOREPLIFETIME(UFPSPlayerCombat, CurrentEquippedWeapon);
+	DOREPLIFETIME_CONDITION(UFPSPlayerCombat, bAiming, COND_SkipOwner);
 }
 
 void UFPSPlayerCombat::OnRep_CurrentEquippedWeapon(AFPSPlayerWeapon* PreviousEquippedWeapon)
@@ -95,15 +96,29 @@ void UFPSPlayerCombat::Initiate_CycleWeapon()
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("CycleWeapon"));
 }
 
+#pragma region AimWeapon
 void UFPSPlayerCombat::Initiate_AimWeaponPressed()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("AimWeaponPressed"));
+	Local_AimWeapon(true);
+	Server_AimWeapon(true);
 }
 
 void UFPSPlayerCombat::Initiate_AimWeaponReleased()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, TEXT("AimWeaponReleased"));
+	Local_AimWeapon(false);
+	Server_AimWeapon(false);
 }
+
+void UFPSPlayerCombat::Server_AimWeapon_Implementation(bool bPressed)
+{
+	Local_AimWeapon(bPressed);
+}
+
+void UFPSPlayerCombat::Local_AimWeapon(bool bPressed)
+{
+	bAiming = bPressed;
+}
+#pragma endregion
 
 void UFPSPlayerCombat::Initiate_FireWeaponPressed()
 {

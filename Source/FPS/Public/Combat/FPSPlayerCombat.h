@@ -30,15 +30,26 @@ public:
 	void DestroyInventory();
 	void EquipWeapon(AFPSPlayerWeapon* Weapon);
 	
+#pragma region CycleWeapon
 	void Initiate_CycleWeapon();
+#pragma endregion
 	
+#pragma region AimWeapon
 	void Initiate_AimWeaponPressed();
 	void Initiate_AimWeaponReleased();
-
+	
+	UPROPERTY(BlueprintReadOnly, Replicated)
+	bool bAiming;
+#pragma endregion
+	
+#pragma region FireWeapon
 	void Initiate_FireWeaponPressed();
 	void Initiate_FireWeaponReleased();
+#pragma endregion
 
+#pragma region ReloadWeapon
 	void Initiate_ReloadWeapon();
+#pragma endregion
 	
 protected:
 	
@@ -59,4 +70,11 @@ private:
 	void OnRep_CurrentEquippedWeapon(AFPSPlayerWeapon* PreviousEquippedWeapon);
 	
 	AFPSPlayerWeapon* SpawnWeapon(const TSubclassOf<AFPSPlayerWeapon> WeaponClass) const;
+	
+#pragma region AimWeapon
+	UFUNCTION(Server, Reliable)
+	void Server_AimWeapon(bool bPressed);
+	
+	void Local_AimWeapon(bool bPressed);
+#pragma endregion
 };

@@ -25,6 +25,7 @@ void UFPSPlayerAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	
 	CurrentFirstPersonAnimSets = CachedFirstPersonAnimSets;
 	CurrentThirdPersonAnimSets = CachedThirdPersonAnimSets;
+	bIsAiming = bCachedAiming;
 }
 
 void UFPSPlayerAnimInstance::GetCurrentAnimSets()
@@ -45,4 +46,5 @@ void UFPSPlayerAnimInstance::GetCurrentAnimSets()
 	
 	CachedFirstPersonAnimSets = PlayerWeaponData->FirstPersonAnimSets.FindChecked(EquippedWeaponType);
 	CachedThirdPersonAnimSets = PlayerWeaponData->ThirdPersonAnimSets.FindChecked(EquippedWeaponType);
+	bCachedAiming = PlayerCombat->bAiming;
 }

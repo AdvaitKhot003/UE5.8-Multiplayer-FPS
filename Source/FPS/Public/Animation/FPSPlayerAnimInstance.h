@@ -28,6 +28,9 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "FPS|Animation")
 	FPlayerAnimSets CurrentThirdPersonAnimSets;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|Animation")
+	bool bIsAiming;
 #pragma endregion
 	
 private:
@@ -37,6 +40,7 @@ private:
 #pragma region Game-thread cache
 	FPlayerAnimSets CachedFirstPersonAnimSets;
 	FPlayerAnimSets CachedThirdPersonAnimSets;
+	bool bCachedAiming;
 #pragma endregion
 	
 	void GetCurrentAnimSets();
