@@ -27,6 +27,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
+	FORCEINLINE UFPSPlayerCombat* GetPlayerCombat() const { return PlayerCombat; }
+	
 #pragma region Player Interface
 	virtual FName GetWeaponGripPoint_Implementation(const FGameplayTag& WeaponType) const override;
 	virtual USkeletalMeshComponent* GetPlayerMesh1P_Implementation() const override;
