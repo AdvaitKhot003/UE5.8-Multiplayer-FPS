@@ -17,6 +17,7 @@ void UFPSPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 	
 	GetCurrentAnimSets();
+	UpdateLeftHandIKEffectorTransform();
 }
 
 void UFPSPlayerAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
@@ -27,6 +28,7 @@ void UFPSPlayerAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	CurrentThirdPersonAnimSets = CachedThirdPersonAnimSets;
 	bIsAiming = bCachedAiming;
 	MappedAimPitchRotation = CachedMappedAimPitchRotation;
+	LeftHandIKEffectorTransform = CachedLeftHandIKEffectorTransform;
 }
 
 void UFPSPlayerAnimInstance::GetCurrentAnimSets()
@@ -49,4 +51,39 @@ void UFPSPlayerAnimInstance::GetCurrentAnimSets()
 	CachedThirdPersonAnimSets = PlayerWeaponData->ThirdPersonAnimSets.FindChecked(EquippedWeaponType);
 	bCachedAiming = PlayerCombat->bAiming;
 	CachedMappedAimPitchRotation = PlayerCharacter->GetMappedAimPitchRotation();
+}
+
+void UFPSPlayerAnimInstance::UpdateLeftHandIKEffectorTransform()
+{
+	if (!IsValid(PlayerCharacter)) return;
+	
+	const UFPSPlayerCombat* PlayerCombat = PlayerCharacter->GetPlayerCombat();
+	if (!IsValid(PlayerCombat)) return;
+	
+	const AFPSPlayerWeapon* CurrentEquippedWeapon = PlayerCombat->GetCurrentEquippedWeapon();
+	if (!IsValid(CurrentEquippedWeapon)) return;
+	
+	const USkeletalMeshComponent* WeaponMesh3P = CurrentEquippedWeapon->GetWeaponMesh3P();
+	if (!IsValid(WeaponMesh3P)) return;
+	
+	const UFPSPlayerWeaponData* PlayerWeaponData = PlayerCombat->GetPlayerWeaponData();
+	if (!IsValid(PlayerWeaponData)) return;
+	
+	const FName LeftHandIKSocket = PlayerWeaponData->LeftHandIKSockets.FindChecked(CurrentEquippedWeapon->GetWeaponType());
+	const FTransform LeftHandIKSocketTransform = WeaponMesh3P->GetSocketTransform(LeftHandIKSocket, RTS_World);
+		
+	FVector OutLocation;
+	FRotator OutRotation;
+		
+	PlayerCharacter->GetMesh()->TransformToBoneSpace
+	(
+		"hand_r",
+		LeftHandIKSocketTransform.GetLocation(),
+		LeftHandIKSocketTransform.GetRotation().Rotator(),
+		OutLocation,
+		OutRotation
+	);
+	
+	CachedLeftHandIKEffectorTransform.SetLocation(OutLocation);
+	CachedLeftHandIKEffectorTransform.SetRotation(OutRotation.Quaternion());
 }

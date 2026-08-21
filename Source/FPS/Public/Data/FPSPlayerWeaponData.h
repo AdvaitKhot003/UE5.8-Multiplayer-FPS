@@ -34,6 +34,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon", meta = (Categories = "Weapon.WeaponType"))
 	TMap<FGameplayTag, float> AimFieldOfViews;
 	
+	UPROPERTY(EditDefaultsOnly, Category = "FPS|Weapon", meta = (Categories = "Weapon.WeaponType"))
+	TMap<FGameplayTag, FName> LeftHandIKSockets;
+	
 	UPROPERTY(EditDefaultsOnly, Category = "FPS|Animation", meta = (Categories = "Weapon.WeaponType"))
 	TMap<FGameplayTag, FPlayerAnimSets> FirstPersonAnimSets;
 	

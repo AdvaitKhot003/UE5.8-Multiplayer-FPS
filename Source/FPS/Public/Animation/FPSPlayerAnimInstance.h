@@ -34,6 +34,9 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "FPS|Animation")
 	float MappedAimPitchRotation;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|FABRIK")
+	FTransform LeftHandIKEffectorTransform;
 #pragma endregion
 	
 private:
@@ -45,7 +48,9 @@ private:
 	FPlayerAnimSets CachedThirdPersonAnimSets;
 	bool bCachedAiming;
 	float CachedMappedAimPitchRotation;
+	FTransform CachedLeftHandIKEffectorTransform;
 #pragma endregion
 	
 	void GetCurrentAnimSets();
+	void UpdateLeftHandIKEffectorTransform();
 };
