@@ -31,16 +31,20 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "FPS|Animation")
 	bool bIsAiming;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|Animation")
+	float MappedAimPitchRotation;
 #pragma endregion
 	
 private:
 	UPROPERTY()
-	AFPSPlayerCharacter* PlayerCharacter;
+	TObjectPtr<AFPSPlayerCharacter> PlayerCharacter;
 	
 #pragma region Game-thread cache
 	FPlayerAnimSets CachedFirstPersonAnimSets;
 	FPlayerAnimSets CachedThirdPersonAnimSets;
 	bool bCachedAiming;
+	float CachedMappedAimPitchRotation;
 #pragma endregion
 	
 	void GetCurrentAnimSets();
