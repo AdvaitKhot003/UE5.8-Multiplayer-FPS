@@ -98,20 +98,6 @@ USkeletalMeshComponent* AFPSPlayerCharacter::GetPlayerMesh3P_Implementation() co
 	return GetMesh();
 }
 
-float AFPSPlayerCharacter::GetMappedAimPitchRotation() const
-{
-	float AimPitchRotation = GetBaseAimRotation().Pitch;
-	
-	if (AimPitchRotation > 90 && !IsLocallyControlled())
-	{
-		const FVector2D InRange(270.f, 360.f);
-		const FVector2D OutRange(-90.f, 0.f);
-		AimPitchRotation = FMath::GetMappedRangeValueClamped(InRange, OutRange, AimPitchRotation);
-	}
-	
-	return AimPitchRotation;
-}
-
 void AFPSPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);

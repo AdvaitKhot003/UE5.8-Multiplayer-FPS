@@ -8,6 +8,7 @@
 #include "FPSPlayerAnimInstance.generated.h"
 
 class AFPSPlayerCharacter;
+class UFPSPlayerCombat;
 /**
  * 
  */
@@ -35,22 +36,30 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "FPS|Animation")
 	float MappedAimPitchRotation;
 	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|Animation")
+	bool bCurrentEquippedWeapon;
+	
 	UPROPERTY(BlueprintReadOnly, Category = "FPS|FABRIK")
 	FTransform LeftHandIKEffectorTransform;
 #pragma endregion
 	
 private:
-	UPROPERTY()
+	UPROPERTY(Transient)
 	TObjectPtr<AFPSPlayerCharacter> PlayerCharacter;
 	
+	UPROPERTY(Transient)
+	TObjectPtr<UFPSPlayerCombat> PlayerCombat;
+	
 #pragma region Game-thread cache
+	bool bCachedAiming;
+	bool bCachedCurrentEquippedWeapon;
+	
 	FPlayerAnimSets CachedFirstPersonAnimSets;
 	FPlayerAnimSets CachedThirdPersonAnimSets;
-	bool bCachedAiming;
+	
 	float CachedMappedAimPitchRotation;
 	FTransform CachedLeftHandIKEffectorTransform;
 #pragma endregion
 	
-	void GetCurrentAnimSets();
-	void UpdateLeftHandIKEffectorTransform();
+	void UpdateAnimationData();
 };
