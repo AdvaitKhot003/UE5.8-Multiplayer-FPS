@@ -35,8 +35,6 @@ public:
 	virtual USkeletalMeshComponent* GetPlayerMesh3P_Implementation() const override;
 #pragma endregion 
 	
-	float GetMappedAimPitchRotation() const;
-	
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "FPS|Mesh")
 	TObjectPtr<USkeletalMeshComponent> PlayerMesh1P;

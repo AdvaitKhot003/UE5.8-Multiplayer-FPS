@@ -4,10 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "Data/FPSPlayerWeaponData.h"
+#include "Types/FPSPlayerTypes.h"
 #include "FPSPlayerAnimInstance.generated.h"
 
 class AFPSPlayerCharacter;
+class UFPSPlayerCombat;
+class UFPSPlayerWeaponData;
 /**
  * 
  */
@@ -33,6 +35,9 @@ protected:
 	bool bIsAiming;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "FPS|Animation")
+	bool bHasCurrentEquippedWeapon;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|Animation")
 	float MappedAimPitchRotation;
 	
 	UPROPERTY(BlueprintReadOnly, Category = "FPS|FABRIK")
@@ -40,17 +45,30 @@ protected:
 #pragma endregion
 	
 private:
-	UPROPERTY()
+	UPROPERTY(Transient)
 	TObjectPtr<AFPSPlayerCharacter> PlayerCharacter;
+	
+	UPROPERTY(Transient)
+	TObjectPtr<UFPSPlayerCombat> PlayerCombat;
+	
+	UPROPERTY(Transient)
+	TObjectPtr<UFPSPlayerWeaponData> PlayerWeaponData;
 	
 #pragma region Game-thread cache
 	FPlayerAnimSets CachedFirstPersonAnimSets;
 	FPlayerAnimSets CachedThirdPersonAnimSets;
+	
 	bool bCachedAiming;
+	
+	bool bCachedCurrentEquippedWeapon;
+	
 	float CachedMappedAimPitchRotation;
+	
 	FTransform CachedLeftHandIKEffectorTransform;
 #pragma endregion
 	
-	void GetCurrentAnimSets();
-	void UpdateLeftHandIKEffectorTransform();
+	void UpdateAnimationData(float DeltaSeconds);
+	FCurrentAnimSets GetCurrentAnimSets() const;
+	float GetMappedAimPitchRotation() const;
+	FTransform CalculateLeftHandIKEffectorTransform() const;
 };
