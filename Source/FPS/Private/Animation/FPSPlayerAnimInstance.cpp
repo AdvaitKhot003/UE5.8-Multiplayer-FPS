@@ -4,6 +4,8 @@
 #include "Character/FPSPlayerCharacter.h"
 #include "Combat/FPSPlayerCombat.h"
 #include "Weapon/FPSPlayerWeapon.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UFPSPlayerAnimInstance::NativeInitializeAnimation()
 {
@@ -12,6 +14,8 @@ void UFPSPlayerAnimInstance::NativeInitializeAnimation()
 	PlayerCharacter = Cast<AFPSPlayerCharacter>(TryGetPawnOwner());
 	if (IsValid(PlayerCharacter))
 	{
+		InitialAimRotation = FRotator(0.f, PlayerCharacter->GetBaseAimRotation().Yaw, 0.f);
+		
 		PlayerCombat = PlayerCharacter->GetPlayerCombat();
 		if (!IsValid(PlayerCombat)) return;
 		PlayerWeaponData = PlayerCombat->GetPlayerWeaponData();
@@ -39,6 +43,10 @@ void UFPSPlayerAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	MappedAimPitchRotation = CachedMappedAimPitchRotation;
 	
 	LeftHandIKEffectorTransform = CachedLeftHandIKEffectorTransform;
+	
+	AimOffsetYaw = CachedAimOffsetYaw;
+	MovementOffsetYaw = CachedMovementOffsetYaw;
+	TurnInPlaceStatus = CachedTurnInPlaceStatus;
 }
 
 void UFPSPlayerAnimInstance::UpdateAnimationData(float DeltaSeconds)
@@ -56,6 +64,11 @@ void UFPSPlayerAnimInstance::UpdateAnimationData(float DeltaSeconds)
 		CachedMappedAimPitchRotation = GetMappedAimPitchRotation();
 		
 		CachedLeftHandIKEffectorTransform = CalculateLeftHandIKEffectorTransform();
+		
+		const FTurnInPlaceParameters Parameters = CalculateTurnInPlaceParameters(DeltaSeconds);
+		CachedAimOffsetYaw = Parameters.AimOffsetYaw;
+		CachedMovementOffsetYaw = Parameters.MovementOffsetYaw;
+		CachedTurnInPlaceStatus = Parameters.TurnInPlaceStatus;
 	}
 }
 
@@ -130,4 +143,78 @@ FTransform UFPSPlayerAnimInstance::CalculateLeftHandIKEffectorTransform() const
 		return FTransform(OutRotation.Quaternion(), OutLocation);
 	}
 	return FTransform::Identity;
+}
+
+FTurnInPlaceParameters UFPSPlayerAnimInstance::CalculateTurnInPlaceParameters(float DeltaSeconds)
+{
+	if (IsValid(PlayerCharacter) && IsValid(PlayerCombat) && IsValid(PlayerWeaponData))
+	{
+		FTurnInPlaceParameters Parameters;
+		
+		const FVector Velocity = PlayerCharacter->GetVelocity();
+		const float Speed = Velocity.Size2D();
+		const bool bIsInAir = PlayerCharacter->GetCharacterMovement()->IsFalling();
+		
+		if (FMath::IsNearlyZero(Speed) && !bIsInAir)
+		{
+			const FRotator CurrentAimRotation(0.f, PlayerCharacter->GetBaseAimRotation().Yaw, 0.f);
+			const FRotator DeltaAimRotation =
+				UKismetMathLibrary::NormalizedDeltaRotator(CurrentAimRotation, InitialAimRotation);
+			
+			Parameters.AimOffsetYaw = DeltaAimRotation.Yaw;
+			
+			if (CurrentTurnInPlaceStatus == ETurnInPlaceStatus::NotTurning)
+			{
+				InterpAimOffsetYaw = Parameters.AimOffsetYaw;
+			}
+			
+			TurnInPlace(DeltaSeconds, Parameters);
+		}
+		
+		if (!FMath::IsNearlyZero(Speed) || bIsInAir)
+		{
+			InitialAimRotation = FRotator(0.f, PlayerCharacter->GetBaseAimRotation().Yaw, 0.f);
+			Parameters.AimOffsetYaw = 0.f;
+			
+			const FRotator AimRotation = PlayerCharacter->GetBaseAimRotation();
+			const FRotator MovementRotation = UKismetMathLibrary::MakeRotFromX(Velocity);
+			const FRotator DeltaMovementRotation =
+				UKismetMathLibrary::NormalizedDeltaRotator(MovementRotation, AimRotation);
+			
+			Parameters.MovementOffsetYaw = DeltaMovementRotation.Yaw;
+			CurrentTurnInPlaceStatus = ETurnInPlaceStatus::NotTurning;
+			Parameters.TurnInPlaceStatus = CurrentTurnInPlaceStatus;
+		}
+		
+		Parameters.AimOffsetYaw *= -1.f;
+		return Parameters;
+	}
+	return {};
+}
+
+void UFPSPlayerAnimInstance::TurnInPlace(float DeltaSeconds, FTurnInPlaceParameters& Parameters)
+{
+	if (Parameters.AimOffsetYaw > 90.f)
+	{
+		CurrentTurnInPlaceStatus = ETurnInPlaceStatus::Right;
+	}
+	
+	else if (Parameters.AimOffsetYaw < -90.f)
+	{
+		CurrentTurnInPlaceStatus = ETurnInPlaceStatus::Left;
+	}
+	
+	if (CurrentTurnInPlaceStatus != ETurnInPlaceStatus::NotTurning)
+	{
+		InterpAimOffsetYaw = FMath::FInterpTo(InterpAimOffsetYaw, 0.f, DeltaSeconds, 5.f);
+		Parameters.AimOffsetYaw = InterpAimOffsetYaw;
+		
+		if (FMath::Abs(Parameters.AimOffsetYaw) < 5.f)
+		{
+			CurrentTurnInPlaceStatus = ETurnInPlaceStatus::NotTurning;
+			InitialAimRotation = FRotator(0.f, PlayerCharacter->GetBaseAimRotation().Yaw, 0.f);
+		}
+	}
+	
+	Parameters.TurnInPlaceStatus = CurrentTurnInPlaceStatus;
 }

@@ -42,6 +42,15 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "FPS|FABRIK")
 	FTransform LeftHandIKEffectorTransform;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|TurnInPlace")
+	float AimOffsetYaw;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|Strafing")
+	float MovementOffsetYaw;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|TurnInPlace")
+	ETurnInPlaceStatus TurnInPlaceStatus = ETurnInPlaceStatus::NotTurning;
 #pragma endregion
 	
 private:
@@ -65,10 +74,24 @@ private:
 	float CachedMappedAimPitchRotation;
 	
 	FTransform CachedLeftHandIKEffectorTransform;
+	
+	float CachedAimOffsetYaw;
+	float CachedMovementOffsetYaw;
+	ETurnInPlaceStatus CachedTurnInPlaceStatus = ETurnInPlaceStatus::NotTurning;
+	
+	FRotator InitialAimRotation;
+	float InterpAimOffsetYaw;
+	ETurnInPlaceStatus CurrentTurnInPlaceStatus = ETurnInPlaceStatus::NotTurning;
 #pragma endregion
 	
 	void UpdateAnimationData(float DeltaSeconds);
+	
 	FCurrentAnimSets GetCurrentAnimSets() const;
+	
 	float GetMappedAimPitchRotation() const;
+	
 	FTransform CalculateLeftHandIKEffectorTransform() const;
+	
+	FTurnInPlaceParameters CalculateTurnInPlaceParameters(float DeltaSeconds);
+	void TurnInPlace(float DeltaSeconds, FTurnInPlaceParameters& Parameters);
 };
