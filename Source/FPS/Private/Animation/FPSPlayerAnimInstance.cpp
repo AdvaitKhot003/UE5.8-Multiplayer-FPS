@@ -54,6 +54,8 @@ void UFPSPlayerAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	
 	bHasCurrentAcceleration = bCachedHasCurrentAcceleration;
 	
+	OrientationWarpAlpha = CachedOrientationWarpAlpha;
+	
 	bIsCrouching = bCachedIsCrouching;
 }
 
@@ -90,6 +92,8 @@ void UFPSPlayerAnimInstance::UpdateAnimationData(float DeltaSeconds)
 		CachedGroundSpeed = PlayerCharacter->GetVelocity().Size2D();
 		
 		bCachedHasCurrentAcceleration = !PlayerCharacterMovement->GetCurrentAcceleration().IsNearlyZero();
+		
+		CachedOrientationWarpAlpha = bCachedHasCurrentAcceleration ? 0.f : 1.f;
 		
 		bCachedIsCrouching = PlayerCharacter->bIsCrouched;
 	}
