@@ -16,6 +16,8 @@ void UFPSPlayerAnimInstance::NativeInitializeAnimation()
 	{
 		InitialAimRotation = FRotator(0.f, PlayerCharacter->GetBaseAimRotation().Yaw, 0.f);
 		
+		PlayerCharacterMovement = PlayerCharacter->GetCharacterMovement();
+		
 		PlayerCombat = PlayerCharacter->GetPlayerCombat();
 		if (!IsValid(PlayerCombat)) return;
 		PlayerWeaponData = PlayerCombat->GetPlayerWeaponData();
@@ -47,19 +49,32 @@ void UFPSPlayerAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	AimOffsetYaw = CachedAimOffsetYaw;
 	MovementOffsetYaw = CachedMovementOffsetYaw;
 	TurnInPlaceStatus = CachedTurnInPlaceStatus;
+	
+	GroundSpeed = CachedGroundSpeed;
+	
+	bHasCurrentAcceleration = bCachedHasCurrentAcceleration;
 }
 
 void UFPSPlayerAnimInstance::UpdateAnimationData(float DeltaSeconds)
 {
-	if (IsValid(PlayerCharacter) && IsValid(PlayerCombat) && IsValid(PlayerWeaponData))
+	if (IsValid(PlayerCharacter) && IsValid(PlayerCombat) && IsValid(PlayerWeaponData) &&
+		IsValid(PlayerCharacterMovement))
 	{
-		const FCurrentAnimSets CurrentAnimSets = GetCurrentAnimSets();
-		CachedFirstPersonAnimSets = CurrentAnimSets.FirstPersonAnimSets;
-		CachedThirdPersonAnimSets = CurrentAnimSets.ThirdPersonAnimSets;
+		const AFPSPlayerWeapon* CurrentEquippedWeapon = PlayerCombat->GetCurrentEquippedWeapon();
+		bCachedCurrentEquippedWeapon = IsValid(CurrentEquippedWeapon);
+		
+		if (IsValid(CurrentEquippedWeapon))
+		{
+			if (CurrentEquippedWeapon->GetWeaponType() != CachedEquippedWeaponType)
+			{
+				CachedEquippedWeaponType = CurrentEquippedWeapon->GetWeaponType();
+				const FCurrentAnimSets CurrentAnimSets = GetCurrentAnimSets();
+				CachedFirstPersonAnimSets = CurrentAnimSets.FirstPersonAnimSets;
+				CachedThirdPersonAnimSets = CurrentAnimSets.ThirdPersonAnimSets;
+			}
+		}
 		
 		bCachedAiming = PlayerCombat->bAiming;
-		
-		bCachedCurrentEquippedWeapon = IsValid(PlayerCombat->GetCurrentEquippedWeapon());
 		
 		CachedMappedAimPitchRotation = GetMappedAimPitchRotation();
 		
@@ -69,6 +84,10 @@ void UFPSPlayerAnimInstance::UpdateAnimationData(float DeltaSeconds)
 		CachedAimOffsetYaw = Parameters.AimOffsetYaw;
 		CachedMovementOffsetYaw = Parameters.MovementOffsetYaw;
 		CachedTurnInPlaceStatus = Parameters.TurnInPlaceStatus;
+		
+		CachedGroundSpeed = PlayerCharacter->GetVelocity().Size2D();
+		
+		bCachedHasCurrentAcceleration = !PlayerCharacterMovement->GetCurrentAcceleration().IsNearlyZero();
 	}
 }
 

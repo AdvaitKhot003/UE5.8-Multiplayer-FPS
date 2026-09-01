@@ -10,6 +10,7 @@
 class AFPSPlayerCharacter;
 class UFPSPlayerCombat;
 class UFPSPlayerWeaponData;
+class UCharacterMovementComponent;
 /**
  * 
  */
@@ -51,6 +52,12 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "FPS|TurnInPlace")
 	ETurnInPlaceStatus TurnInPlaceStatus = ETurnInPlaceStatus::NotTurning;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|Locomotion")
+	float GroundSpeed;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|Locomotion")
+	bool bHasCurrentAcceleration;
 #pragma endregion
 	
 private:
@@ -63,9 +70,14 @@ private:
 	UPROPERTY(Transient)
 	TObjectPtr<UFPSPlayerWeaponData> PlayerWeaponData;
 	
+	UPROPERTY(Transient)
+	UCharacterMovementComponent* PlayerCharacterMovement;
+	
 #pragma region Game-thread cache
 	FPlayerAnimSets CachedFirstPersonAnimSets;
 	FPlayerAnimSets CachedThirdPersonAnimSets;
+	
+	FGameplayTag CachedEquippedWeaponType;
 	
 	bool bCachedAiming;
 	
@@ -82,6 +94,10 @@ private:
 	FRotator InitialAimRotation;
 	float InterpAimOffsetYaw;
 	ETurnInPlaceStatus CurrentTurnInPlaceStatus = ETurnInPlaceStatus::NotTurning;
+	
+	float CachedGroundSpeed;
+	
+	bool bCachedHasCurrentAcceleration;
 #pragma endregion
 	
 	void UpdateAnimationData(float DeltaSeconds);
