@@ -58,6 +58,9 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "FPS|Locomotion")
 	bool bHasCurrentAcceleration;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "FPS|Locomotion")
+	bool bIsCrouching;
 #pragma endregion
 	
 private:
@@ -98,6 +101,8 @@ private:
 	float CachedGroundSpeed;
 	
 	bool bCachedHasCurrentAcceleration;
+	
+	bool bCachedIsCrouching;
 #pragma endregion
 	
 	void UpdateAnimationData(float DeltaSeconds);

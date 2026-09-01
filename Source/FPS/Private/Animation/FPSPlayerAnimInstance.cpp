@@ -53,6 +53,8 @@ void UFPSPlayerAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	GroundSpeed = CachedGroundSpeed;
 	
 	bHasCurrentAcceleration = bCachedHasCurrentAcceleration;
+	
+	bIsCrouching = bCachedIsCrouching;
 }
 
 void UFPSPlayerAnimInstance::UpdateAnimationData(float DeltaSeconds)
@@ -88,6 +90,8 @@ void UFPSPlayerAnimInstance::UpdateAnimationData(float DeltaSeconds)
 		CachedGroundSpeed = PlayerCharacter->GetVelocity().Size2D();
 		
 		bCachedHasCurrentAcceleration = !PlayerCharacterMovement->GetCurrentAcceleration().IsNearlyZero();
+		
+		bCachedIsCrouching = PlayerCharacter->bIsCrouched;
 	}
 }
 
