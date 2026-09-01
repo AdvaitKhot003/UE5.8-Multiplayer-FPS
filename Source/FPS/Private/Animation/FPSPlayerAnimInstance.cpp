@@ -42,6 +42,16 @@ void UFPSPlayerAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	
 	bHasCurrentEquippedWeapon = bCachedCurrentEquippedWeapon;
 	
+	bHasCurrentAcceleration = bCachedHasCurrentAcceleration;
+	
+	bIsInAir = bCachedIsInAir;
+	
+	bIsCrouching = bCachedIsCrouching;
+	
+	GroundSpeed = CachedGroundSpeed;
+	
+	OrientationWarpAlpha = CachedOrientationWarpAlpha;
+	
 	MappedAimPitchRotation = CachedMappedAimPitchRotation;
 	
 	LeftHandIKEffectorTransform = CachedLeftHandIKEffectorTransform;
@@ -49,14 +59,6 @@ void UFPSPlayerAnimInstance::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
 	AimOffsetYaw = CachedAimOffsetYaw;
 	MovementOffsetYaw = CachedMovementOffsetYaw;
 	TurnInPlaceStatus = CachedTurnInPlaceStatus;
-	
-	GroundSpeed = CachedGroundSpeed;
-	
-	bHasCurrentAcceleration = bCachedHasCurrentAcceleration;
-	
-	OrientationWarpAlpha = CachedOrientationWarpAlpha;
-	
-	bIsCrouching = bCachedIsCrouching;
 }
 
 void UFPSPlayerAnimInstance::UpdateAnimationData(float DeltaSeconds)
@@ -80,6 +82,16 @@ void UFPSPlayerAnimInstance::UpdateAnimationData(float DeltaSeconds)
 		
 		bCachedAiming = PlayerCombat->bAiming;
 		
+		bCachedHasCurrentAcceleration = !PlayerCharacterMovement->GetCurrentAcceleration().IsNearlyZero();
+		
+		bCachedIsInAir = PlayerCharacterMovement->IsFalling();
+		
+		bCachedIsCrouching = PlayerCharacter->bIsCrouched;
+		
+		CachedGroundSpeed = PlayerCharacter->GetVelocity().Size2D();
+		
+		CachedOrientationWarpAlpha = bCachedHasCurrentAcceleration ? 0.f : 1.f;
+		
 		CachedMappedAimPitchRotation = GetMappedAimPitchRotation();
 		
 		CachedLeftHandIKEffectorTransform = CalculateLeftHandIKEffectorTransform();
@@ -88,14 +100,6 @@ void UFPSPlayerAnimInstance::UpdateAnimationData(float DeltaSeconds)
 		CachedAimOffsetYaw = Parameters.AimOffsetYaw;
 		CachedMovementOffsetYaw = Parameters.MovementOffsetYaw;
 		CachedTurnInPlaceStatus = Parameters.TurnInPlaceStatus;
-		
-		CachedGroundSpeed = PlayerCharacter->GetVelocity().Size2D();
-		
-		bCachedHasCurrentAcceleration = !PlayerCharacterMovement->GetCurrentAcceleration().IsNearlyZero();
-		
-		CachedOrientationWarpAlpha = bCachedHasCurrentAcceleration ? 0.f : 1.f;
-		
-		bCachedIsCrouching = PlayerCharacter->bIsCrouched;
 	}
 }
 
@@ -179,10 +183,9 @@ FTurnInPlaceParameters UFPSPlayerAnimInstance::CalculateTurnInPlaceParameters(fl
 		FTurnInPlaceParameters Parameters;
 		
 		const FVector Velocity = PlayerCharacter->GetVelocity();
-		const float Speed = Velocity.Size2D();
-		const bool bIsInAir = PlayerCharacter->GetCharacterMovement()->IsFalling();
+		const float Speed = Velocity.Size2D();;
 		
-		if (FMath::IsNearlyZero(Speed) && !bIsInAir)
+		if (FMath::IsNearlyZero(Speed) && !bCachedIsInAir)
 		{
 			const FRotator CurrentAimRotation(0.f, PlayerCharacter->GetBaseAimRotation().Yaw, 0.f);
 			const FRotator DeltaAimRotation =
@@ -198,7 +201,7 @@ FTurnInPlaceParameters UFPSPlayerAnimInstance::CalculateTurnInPlaceParameters(fl
 			TurnInPlace(DeltaSeconds, Parameters);
 		}
 		
-		if (!FMath::IsNearlyZero(Speed) || bIsInAir)
+		if (!FMath::IsNearlyZero(Speed) || bCachedIsInAir)
 		{
 			InitialAimRotation = FRotator(0.f, PlayerCharacter->GetBaseAimRotation().Yaw, 0.f);
 			Parameters.AimOffsetYaw = 0.f;
